@@ -1,0 +1,11 @@
+.todo-list-item{
+    background-color: white;
+    .mdc-list-item__graphic{
+        width:18px;
+        height:19px;
+        margin-right:1rem;
+    }
+    &+&{
+        margin-top: 2px;
+    }
+}

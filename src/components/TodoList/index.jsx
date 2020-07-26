@@ -1,25 +1,17 @@
-import React,{useContext,useState,useEffect} from 'react';
+import React from 'react';
+
 import { 
     Typography,
-    List,Spinner,
+    List
  } from 'mdc-react';
-import DBContext from '../../context/db';
-import TodoListItem from '../TodoListItem/index';
+
+
 import './index.scss';
-export default function TodoList({match}){
-    const[todos,setTodos] = useState([]);
-    const db = useContext(DBContext);
-    useEffect(()=>{
-        db.get('todos')(collection=>
-            collection.where('listId', '==', match.params.listId)
-            
-        )
-        .then(setTodos);
-    },[db,match.params.listId]);
+import TodoListItem from '../TodoListItem';
 
-    const list = db.lists.find(list => list.id === match.params.listId);
+export default function TodoList({list, todos, onDelete}){
 
-    // if(!list) return <Spinner />;
+
     
     return(
         <div className='todo-list'>
@@ -29,6 +21,7 @@ export default function TodoList({match}){
             <TodoListItem 
             key={todo.id} 
             todo={todo}
+            onDelete={onDelete}
             />
           )}
       </List>
