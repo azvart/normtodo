@@ -1,49 +1,70 @@
-import React,{useContext,useState,useEffect} from 'react';
-import DBContext from '../context/db';
+import React,{useEffect, useState,useContext} from 'react';
+
+import DataContext from '../context/data';
+import useApi from '../hooks/api';
 
 
-
+import {Spinner,Layout} from 'mdc-react';
 import './index.scss';
 import TodoList from '../components/TodoList';
 import TodoForm from '../components/TodoForm/index';
 
+import TodoDetails from '../components/TodoDetails';
 
-export default function TodoListPage({match}){
-    const[todos,setTodos] = useState([]);
-    const db = useContext(DBContext);
+
+export default function TodoListPage({ match }){
+    const {lists} = useContext(DataContext);
+    const[selectedTodo,setSelectedTodo]=useState(null);
+    const { data:{ lists, todos },actions} = useApi();
+ 
 
     useEffect(()=>{
+        if(match.params.listId){
+            actions.getListTodos(match.params.listId);
+        }else{
+            actions.getTodos();
+        }
         
-        db.getListsTodos(match.params.listId)
-        .then(setTodos);
-    },[db,match.params.listId]);
-
-    const list = db.lists.find(list => list.id === match.params.listId);
+    },[actions,match.params.listId]);
 
      function handleSubmit(title){
-            db.createTodo({
+            actions.createTodo({
                 title,
                 listId:list.id
-            }).then(todo=>{
-                console.log(todo);
-                setTodos([...todos,todo])});
+            });
      }
     
      function handleDelete(todoId){
-      db.deleteTodo(todoId).then(todoId=>{
-          setTodos([...todos.filter(t=>t.id !==todoId)]);
-      });
+    actions.deleteTodo(todoId);
      }
+     function handleUpdate(todoId, data){
+        actions.updateTodo(todoId,data);
+     }
+     function handleSelect(todo){
+         setSelectedTodo(todo);
+     }
+   const list = lists.find(list => list.id === match.params.listId);
+   
+    // if(!lists || !todos) return <Spinner />;
     return(
-                <div id='todo-list-page'className='page'>
-                    
+                <Layout id='todo-list-page'className='page' row>
+                    <Layout>
             <TodoList 
-                list={list}
+              list={lists}
               todos={todos}
+              onSelect={handleSelect}
               onDelete={handleDelete}
-
+              onUpdate={handleUpdate}
             />
             <TodoForm onSubmit={handleSubmit} />
-        </div>
+            </Layout>
+
+            {selectedTodo &&
+                <TodoDetails
+                    todo={selectedTodo}
+                    onClose={()=>setSelectedTodo(null)}
+                />
+                }
+        </Layout>
     )
 }

@@ -1,22 +1,10 @@
 import {db} from './firebase';
 
-export function createTodo(data){
-  return db.collection("todos").add({
-    ...data,
-    completed:false,
-    
-})
-.then(docRef=>  docRef.get())
-.then(doc=>({
-  id:doc.id,
-  ...doc.data()
-}));
 
-}
 
 export function getLists(){
 
-  return db.collection('lists')
+  return db.collection("lists")
   .get()
   .then(snapshot=>{
     const items = snapshot.docs.map(doc =>({
@@ -31,9 +19,22 @@ export function getLists(){
 
 }
 
+export function getTodos(){
+  return db.collection('todos')
+  .where('listId', '==','')
+  .get()
+  .then(snapshot=>{
+    const items = snapshot.docs.map(doc=>({
+      id:doc.id,
+      ...doc.data()
+    }));
+    return items;
+  });
+}
+
 export function getListsTodos(listId){
   
-  return db.collection('todos')
+  return db.collection("todos")
   .where('listId', '==', listId)
   .get()
   .then(snapshot=>{
@@ -51,6 +52,27 @@ export function getListsTodos(listId){
  
 
   
+
+} 
+
+export function createTodo(data){
+  return db.collection("todos").add({
+    ...data,
+    completed:false,
+    
+})
+.then(docRef=>  docRef.get())
+.then(doc=>({
+  id:doc.id,
+  ...doc.data()
+}));
+
+}
+
+export function updateTodo(todoId,data){
+ 
+ return   db.collection("todos").doc(todoId).update(data)
+ .then(res=>console.log(res));
 
 }
 

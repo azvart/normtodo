@@ -2,5 +2,7 @@
     padding:1rem;
     max-width:100%;
     margin-top: 4px;
-  
+    .mdc-layout {
+        flex:1;
+    }
 }

@@ -1,39 +1,51 @@
-import React,{useEffect,useState} from 'react';
+import React,{useEffect, useReducer, useContext} from 'react';
 import { Switch, Route } from 'react-router-dom';
 import './App.scss';
-import * as api from './api';
+
+
+import {reducer,initialState,actions} from './store';
+import DataContext from './context/data';
+
 
 import AppDrawer from './components/AppDrawer/index';
 import AppContent from './components/AppConentent/index';
 import TodoList from './pages/TodoList';
-import DBContext from './context/db' ;
+
+
+
+
+
 export default function App(){
 
+  const data = useContext();
+const[state,dispatch] = useReducer(reducer, initialState);
 
-  const[lists,setLists] = useState([]);
+
 
 
   useEffect(()=>{
+    actions.getLists();
+  },[actions]);
 
-      api.getLists().then(setLists);
-      
-  },[]);
   return (
-    <DBContext.Provider value={{ lists, ...api }}>
+    <DataContext.Provider value={{state,dispatch}}>
     <div className="app">
 
-      <AppDrawer lists={lists}/>
+      <AppDrawer lists={state.lists}/>
       
       
       <AppContent>
         <Switch>
-            <Route exact path="/:listId" component={TodoList} />
+            <Route exact path="/" component={TodoList} />
+            <Route exact path="/important" component={TodoList} />
+            <Route exact path="/planned" component={TodoList} />
+            <Route path="/:listId/:todoId?" component={TodoList} />
         </Switch>
           
         </AppContent>
         
     </div>
-    </DBContext.Provider>
+    </DataContext.Provider>
   );
 }
 
