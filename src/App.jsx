@@ -1,16 +1,15 @@
-import React,{useEffect, useReducer,  useMemo} from 'react';
-import { Switch, Route } from 'react-router-dom';
+import React,{useEffect} from 'react';
+import { Switch, Route,} from 'react-router-dom';
 import './App.scss';
 
 
-import {reducer,initialState,actions} from './store';
-import DataContext from './context/data';
+import useStore from './hooks/store';
 
 
 import AppDrawer from './components/AppDrawer/index';
 import AppContent from './components/AppConentent/index';
 import TodoList from './pages/TodoList';
-import LoginPage from './pages/Login/index';
+import AuthPage from './pages/Login/index';
 
 
 
@@ -18,20 +17,24 @@ import LoginPage from './pages/Login/index';
 export default function App(){
 
  
-const[state,dispatch] = useReducer(reducer, initialState);
-
-const contextValue = useMemo(()=>{
-  return { state, dispatch }
-},[state,dispatch]);
+const {state, actions} = useStore();
 
 
   useEffect(()=>{
-    actions.getLists(dispatch);
-    actions.setAuth(dispatch);
+    actions.getLists();
+    actions.initAuth();
   },[]);
 
+ if(!state.user){
+   return(
+     <Route component={AuthPage} />
+   );
+ }else{
+
   return (
-    <DataContext.Provider value={contextValue}>
+    
+      
+  
     <div className="app">
       
       <AppDrawer lists={state.lists}/>
@@ -39,7 +42,7 @@ const contextValue = useMemo(()=>{
       
       <AppContent>
         <Switch>
-            <Route exact path="/login" component={LoginPage} />
+            
             <Route exact path="/" component={TodoList} />
             <Route exact path="/important" component={TodoList} />
             <Route exact path="/planned" component={TodoList} />
@@ -49,7 +52,8 @@ const contextValue = useMemo(()=>{
         </AppContent>
         
     </div>
-    </DataContext.Provider>
+  
   );
+ }
 }
 

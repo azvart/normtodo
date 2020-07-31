@@ -13,11 +13,11 @@ import {Drawer,
         Icon,
 } from 'mdc-react';
 
-import DataContext from '../../context/data';
 
+import  useStore from '../../hooks/store';
 
 export default function AddDrawer({lists}){
-    const {state} = useContext(DataContext);
+    const { state, actions } = useStore();
     return(
         
         <Drawer id='app-drawer'>

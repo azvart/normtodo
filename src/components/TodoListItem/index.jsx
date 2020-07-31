@@ -19,12 +19,13 @@ function handleChange(completed){
     return(
             <ListItem>
                 <ListItemGraphic>
-                    <Checkbox 
+                    <input 
+                    type='checkbox'
                     checked={todo.completed}
                     onChange={handleChange}
-                    >
+                    />
 
-                    </Checkbox>
+                    
                 </ListItemGraphic>
                 <ListItemText onClick={()=>onSelect(todo)}>{todo.title}</ListItemText>
                 <ListItemMeta>

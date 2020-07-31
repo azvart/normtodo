@@ -1,33 +1,61 @@
 import React,{useState} from 'react';
 
-import {actions} from '../../store';
+import useStore from '../../hooks/store';
 
+export default function AuthPage(){
+    const {actions} = useStore();
+    const[email,setEmail] = useState('');
+    const[password,setPassword] = useState('');
+    const[error,setError] = useState('');
 
-export default function LoginPage({ history }){
-    const[login,setLogin] = useState('');
-    const[password, setPassword] = useState(''); 
-    function handleSubmit(event){
-        event.preventDefault(); 
-        actions.loginUser(login,password);
+    function handleLogInButtonClick(){
+        if( email && password){
+            actions.registerUser(email,password)
+                .catch(error => setError(error.message));
+        }
     }
-    console.log(actions);
-        return(
+
+    function handleRegisterButtononClick(){
+        if(email && password){
+            actions.registerUser(email,password)
+                .catch(error => setError(error.message));
+        }
+    }
+
+    return(
         <div>
-            <form onSubmit={handleSubmit} >
-            <input 
-                value={login}
-                onChange={(e)=>setLogin(e.targetvalue)}
-                type='email'
-                required
-            />
-            <input
-                type='password'
-                 value={password}
-                 onChange={(e)=>setPassword(e.targetvalue)}
-                 required
-            />
-                <button type='submit'>Enter</button>
-            </form>
+            <h1>React ToDo</h1>
+             {error && 
+                <h1>{error}</h1>
+             }
+             <div>
+                 <input type="email"
+                    value={email}
+                    placeholder="Write e-mail"
+                    required
+                    onChange={(e)=>setEmail(e.target.value)}
+                 />
+             </div>
+
+             <div>
+                 <input type="password"
+                    value={password}
+                    placeholder="Write password"
+                    required
+                    onChange={(e)=>setPassword(e.target.value)}
+                 />
+             </div>
+
+
+             <div>
+                <button onClick={handleLogInButtonClick}>
+                    Enter
+                </button>
+                     
+                <button onClick={handleRegisterButtononClick}>
+                    Register
+                </button>
+             </div>
         </div>
-    );
+    )
 }

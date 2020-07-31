@@ -7,19 +7,19 @@ import './index.scss';
 
 export default function TodoForm({onSubmit}){
 
-    const[title,setTitle]=useState([]);
+    const[title,setTitle]=useState('');
+    function handleSubmit(event) {
+        event.preventDefault();
 
-    function handleSubmit(event){
-            event.preventDefault();
-            onSubmit(title);
-            setTitle('');
+        onSubmit(title);
+        setTitle('');
     }
     return(
         <form className='todo-form' onSubmit={handleSubmit}>
             <List>
                 <ListItem>
             <TextField 
-            placeholder='write the task'
+            placeholder='Write the new task'
                 fullWidth
                 value={title}
                 onChange={(e)=>{setTitle(e.target.value)}}
